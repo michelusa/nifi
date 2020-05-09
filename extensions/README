@@ -1,0 +1,62 @@
+custom processor:
+	mvn archetype:generate
+	use nifi as filter and pick processor choice, its version
+	decide on groupId, artifactId, version, package, artifactBase
+
+	cd artifactId
+	mvn clean install
+	cp nifi-my_processor-nar/target/nifi-my_processor-nar-current.nar
+			~/nifi/nifi-latest/extensions/
+
+	~/nifi/nifi-latest/bin/nifi.sh restart
+	verify MyProcessor is available to put on dash
+------------------------------------------------------------------------
+
+custom service:
+	mvn archetype:generate
+	use nifi as filter and pick service choice, its version
+	decide on groupIdm artifactId, version, package
+
+	cd serviceArtifactId
+	mvn clean install
+	cp nifi-artifactBaseName-nar/target/ ~/nifi/nifi-latest/extensions/
+	cp nifi-artifactBaseName-nar/target/nifi-artifactBaseName-nar-*.nar
+				~/nifi/nifi-latest/extensions/
+	~/nifi/nifi-latest/bin/nifi.sh restart
+	verify StandardMyService can be added in ControllerServices
+
+------------------------------------------------------------------------
+
+refer to service through processor property:
+
+add to processor nar pom file, versioned nifi dependency:
+	<dependency>
+		<groupId>org.apache.nifi</groupId>
+		<artifactId>nifi-standard-services-api-nar</artifactId>
+		<version>1.11.4</version>
+		<type>nar</type>
+	</dependency
+
+add to actual processor pom, service dependency:
+	<dependency>
+                  <groupId>groupId</groupId>
+                  <artifactId>nifi-artifactBaseName</artifactId>
+                  <version>current</version>
+        </dependency>
+
+add a property and property descriptor to the processor class:
+import home.sweet.MyService;
+//in Processor class:
+public static final PropertyDescriptor MY_SERVICE = new PropertyDescriptor
+            .Builder().name("Service name")
+            .displayName("Service display name")
+            .description("Service description")
+            .required(true)
+            .identifiesControllerService(MyService.class)
+            .build();
+//in init:
+descriptors.add(MY_SERVICE);
+
+build and install as above. Service is available for selection through the
+   new property
+
