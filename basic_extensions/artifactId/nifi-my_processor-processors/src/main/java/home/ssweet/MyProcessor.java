@@ -103,11 +103,18 @@ public class MyProcessor extends AbstractProcessor {
     }
 
     @Override
-    public void onTrigger(final ProcessContext context, final ProcessSession session) throws ProcessException {
+    public void onTrigger(final ProcessContext context,
+			final ProcessSession session) throws ProcessException {
         FlowFile flowFile = session.get();
         if ( flowFile == null ) {
             return;
         }
-        // TODO implement
+	final MyService myService =
+	   context.getProperty(MY_SERVICE)
+	   .asControllerService(MyService.class);
+	final String answer = myService.execute("marco");
+	getLogger().info("service answer: " + answer);
+
+	session.transfer(flowFile, MY_RELATIONSHIP);
     }
 }

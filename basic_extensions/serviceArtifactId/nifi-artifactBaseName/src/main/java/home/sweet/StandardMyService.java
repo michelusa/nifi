@@ -73,8 +73,9 @@ public class StandardMyService extends AbstractControllerService implements MySe
     }
 
     @Override
-    public void execute() throws ProcessException {
-
+    public String execute(String query) throws ProcessException {
+	getLogger().info("Service execute was called with: " + query);
+	return "polo";
     }
 
 }

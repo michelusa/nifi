@@ -29,7 +29,7 @@ custom service:
 
 refer to service through processor property:
 
-add to processor nar pom file, versioned nifi dependency:
+add to processor nar pom file, following nifi dependency:
 	<dependency>
 		<groupId>org.apache.nifi</groupId>
 		<artifactId>nifi-standard-services-api-nar</artifactId>
